@@ -30,8 +30,8 @@ def validateSchema(
 			- If the schema key is callable, validate against any pairs in the item with a key that evaluates to True
 			Values use the same validation methods, with the following addition:
 			- If the value is a dictionary, recur
-		schema_key (Any, optional): If set, only validates the schema for that specific key
-		schema_val (Any, optional): If set, validates for that value instead of getting the value from the main schema dict. Generally only used for passing through the value on iterable schema keys, where we can't access schema[schema_key] (since schema_key is only one option of an iterable, and thus does not exist in schema.)
+		schema_key (Any, optional): Internal use primarily. If set, only validates the schema for that specific key
+		schema_val (Any, optional): Internal use primarily. If set, validates for that value instead of getting the value from the main schema dict. Generally only used for passing through the value on iterable schema keys, where we can't access schema[schema_key] (since schema_key is only one option of an iterable, and thus does not exist in schema.)
 
 	Raises:
 		ValueError: The key or value that has failed to validate, and the reason.
