@@ -63,7 +63,41 @@ from typing import Any, Iterable
 sentinel = object()
 
 
-def validateSchema(item: dict, schema: dict, schema_key: Any = sentinel, schema_val: Any = sentinel) -> bool:
+def validateSchema(
+		item: dict,
+		schema: dict,
+		schema_key: Any = sentinel,
+		schema_val: Any = sentinel,
+) -> bool:
+	"""_summary_
+
+	Args:
+		item (dict): The item to validate against the schema
+		schema (dict): The schema to validate.
+			Format:
+			{
+				'key': 'value',
+				'key2': {
+					'key3': 'RequiredValue'
+				}
+			}
+			Keys validate with the following checks:
+			- Direct value comparison
+			- If the schema key is a type (or type hint, like typing.Iterable), validate against any pairs in the item with a key of that type
+			- If the schema key is iterable, try each value for each check
+			- If the schema key is callable, validate against any pairs in the item with a key that evaluates to True
+			Values use the same validation methods, with the following addition:
+			- If the value is a dictionary, recur
+		schema_key (Any, optional): If set, only validates the schema for that specific key
+		schema_val (Any, optional): If set, validates for that value instead of getting the value from the main schema dict. Generally only used for passing through the value on iterable schema keys, where we can't access schema[schema_key] (since schema_key is only one option of an iterable, and thus does not exist in schema.)
+
+	Raises:
+		ValueError: The key or value that has failed to validate, and the reason.
+
+	Returns:
+		bool: If the schema validates, returns True. Otherwise, raises a ValueError.
+			If neither of these happens, something has gone *very* awry.
+	"""
 	# Returns True if successful, raises ValueError if not
 	if schema_key is sentinel:
 		for schema_key in schema:
