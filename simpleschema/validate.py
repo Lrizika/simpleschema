@@ -2,64 +2,6 @@
 from typing import Any, Iterable
 
 
-# def validate(item: dict, structure: dict) -> bool:
-# 	"""
-# 	Checks if a dict's structure matches a given structure definition.
-# 		Yes, this is basically just reinventing a schema library.
-
-# 	Args:
-# 		item (dict): Item to check structure of
-# 		structure (dict): Structure required
-# 			Format:
-# 			{
-# 				'key': type,
-# 				'key2': {
-# 					'key3': 'RequiredValue'
-# 				}
-# 			}
-
-# 	Returns:
-# 		bool: Whether the structure matches
-# 	"""
-
-# 	for key in structure:
-# 		# If we're missing a key, structure's wrong
-# 		if key not in item: return(False)
-
-# 		if isinstance(structure[key], type):
-# 			# If a value is supposed to be a given type and isn't, structure's wrong
-# 			if not isinstance(item[key], structure[key]): return(False)
-# 		elif isinstance(structure[key], dict):
-# 			# If a value is a dictionary, we recurse down instead
-# 			if not validate(item[key], structure[key]): return(False)
-# 		else:
-# 			# If a value has a required value, check if that's equal
-# 			if item[key] != structure[key]: return(False)
-
-# 	# If every key is correct, we're good
-# 	return(True)
-
-
-# def validateSchema(item: dict, structure: dict) -> bool:
-# 	for structure_key in structure:
-# 		if structure_key in item:
-# 			validateItem(item[structure_key], structure[structure_key])
-# 		elif (
-# 				isinstance(structure_key, type) or
-# 				callable(getattr(structure_key, "__instancecheck__", None))
-# 		):
-# 			# If the structure key is a class or otherwise supports isinstance()
-# 			# We check if any keys in the item are an instance of the class
-# 			for item_key in item:
-# 				if isinstance(item_key, structure_key):
-# 					validateItem(item[item_key], structure[structure_key])
-# 		elif isinstance(structure_key, Iterable):
-# 			raise NotImplementedError
-# 		elif callable(structure_key):
-# 			raise NotImplementedError
-# 		else:
-# 			return False
-
 sentinel = object()
 
 
