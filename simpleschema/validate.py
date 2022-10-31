@@ -126,12 +126,13 @@ def validateSchema(item: dict, schema: dict) -> bool:
 			validateItem(item[schema_key], schema_val)
 		else:
 			for item_key, item_val in item.items():
+				logging.debug(f'Comparing schema key {schema_key}, schema value {schema_val} against item key {item_key}, item value {item_val}')
 				try:
 					validateItem(item_key, schema_key)
 					validateItem(item_val, schema_val)
 					break
 				except ValueError as e:
-					logging.info(e)
+					logging.debug(e)
 			else:
 				raise ValueError(f'Schema key {schema_key}: schema value {schema_val} - No valid key/value pair found in item')
 	return True
@@ -152,7 +153,7 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 		bool: If the value validates, returns True
 	"""
 	if schema_val == item_val:
-		logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
+		logging.debug(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 		return True
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
 		return validateSchema(item_val, schema_val)
@@ -161,7 +162,7 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 			callable(getattr(schema_val, "__instancecheck__", None))
 	):
 		if isinstance(item_val, schema_val):
-			logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
+			logging.debug(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 			return True
 		else:
 			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Type requirement mismatch')
@@ -174,12 +175,12 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 					validateItem(item_val, schema_val_option)
 					return True
 				except ValueError as e:
-					logging.info(e)
+					logging.debug(e)
 		else:
 			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - No item values validate for schema options')
 	elif callable(schema_val):
 		if schema_val(item_val):
-			logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
+			logging.debug(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 			return True
 		else:
 			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Function does not validate')
