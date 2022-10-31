@@ -7,6 +7,20 @@ logger = logging.getLogger(__name__)
 sentinel = object()
 
 
+def is_valid(item: dict, schema: dict) -> bool:
+	"""
+	Convenience function that returns a bool instead of raising an exception on validation failure.
+		See simpleschema.validate for args
+
+	Returns:
+		bool: Whether the schema is valid for the item
+	"""
+	try:
+		return validateSchema(item, schema)
+	except ValueError:
+		return False
+
+
 def validateSchema(item: dict, schema: dict) -> bool:
 	"""
 	Validates a dict against a schema.
@@ -33,8 +47,9 @@ def validateSchema(item: dict, schema: dict) -> bool:
 		ValueError: The key or value that has failed to validate, and the reason.
 
 	Returns:
-		bool: If the schema validates, returns True. Otherwise, raises a ValueError.
-			If neither of these happens, something has gone *very* awry.
+		bool: If the schema validates, returns True.
+			Note that this *only* returns True. If the schema fails to validate, we instead raise
+			a ValueError, which includes information about the validation failure.
 	"""
 	for schema_key, schema_val in schema.items():
 		if schema_key in item:
