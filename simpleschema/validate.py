@@ -139,11 +139,11 @@ def validateSchema(item: dict, schema: dict) -> bool:
 
 def validateItem(item_val: Any, schema_val: Any) -> bool:
 	"""
-	Validates a value against the schema value for that key.
+	Validates a value against a schema constraint.
 
 	Args:
 		item_val (Any): The value to validate
-		schema_val (Any): The schema value to validate against
+		schema_val (Any): The schema constraint to validate against
 
 	Raises:
 		ValueError: If the value does not validate
@@ -152,6 +152,7 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 		bool: If the value validates, returns True
 	"""
 	if schema_val == item_val:
+		logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 		return True
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
 		return validateSchema(item_val, schema_val)
@@ -160,9 +161,10 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 			callable(getattr(schema_val, "__instancecheck__", None))
 	):
 		if isinstance(item_val, schema_val):
+			logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 			return True
 		else:
-			raise ValueError(f'Schema value {schema_val}, item value {item_val} - Type requirement mismatch')
+			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Type requirement mismatch')
 	elif isinstance(schema_val, Iterable):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
@@ -174,14 +176,15 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 				except ValueError as e:
 					logging.info(e)
 		else:
-			raise ValueError(f'Schema value {schema_val}, item value {item_val} - No item values validate for schema options')
+			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - No item values validate for schema options')
 	elif callable(schema_val):
 		if schema_val(item_val):
+			logging.info(f'Schema constraint {schema_val}, item value {item_val} - Validation success')
 			return True
 		else:
-			raise ValueError(f'Schema value {schema_val}, item value {item_val} - Function does not validate')
+			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Function does not validate')
 	else:
-		raise ValueError(f'Schema value {schema_val}, item value {item_val} - Item does not validate')
+		raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Item does not validate')
 
 
 
