@@ -96,10 +96,10 @@ def validateItem(item_val: Any, schema_val: Any) -> bool:
 			return True
 		else:
 			raise ValueError(f'Schema constraint {schema_val}, item value {item_val} - Type requirement mismatch')
-	elif isinstance(schema_val, Iterable):
+	elif isinstance(schema_val, Iterable) and not isinstance(schema_val, str):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
-				# This check prevents us from infinite recursion with items like strings
+				# This check prevents us from infinite recursion with certain items
 				# Where an item of the iterable is in and of itself iterable
 				try:
 					validateItem(item_val, schema_val_option)
