@@ -104,7 +104,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 			return True
 		else:
 			raise ValueError(f'Schema constraint {schema_val}, item {item_val} - Type requirement mismatch')
-	elif isinstance(schema_val, typing.Iterable) and not isinstance(schema_val, str):
+	elif isinstance(schema_val, typing.Iterable) and not isinstance(schema_val, (str, bytes)):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
 				# This check prevents us from infinite recursion with certain items
