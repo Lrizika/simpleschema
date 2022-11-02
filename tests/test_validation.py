@@ -6,6 +6,9 @@ import logging
 import sys
 
 
+logger = logging.getLogger(__name__)
+
+
 class TestValidateSchema(unittest.TestCase):
 	pass
 
@@ -67,17 +70,39 @@ class TestValidateItem(unittest.TestCase):
 
 	def test_validates_failure(self):
 		invalid_schema_pairs = [
+			# Invalid equalities
 			(object(), object()),  # Noteably not the same object
 			(1234, 1),
 			(None, 0),
 			((), 0),
 			('asdf', 'a'),
 			(b'asdf', 'a'),
+			# Invalid typing.Literal
+			(typing.Literal[21], 1),
+			(typing.Literal['a'], 1),
+			# Invalid types
+			(str, 1),
+			(int, '1'),
+			(callable, 1),
+			(type, 1),
+			(str, b'asdf'),
+			# Missing option in iterable
+			([1, 2], 3),
+			((1, 2, 3), '2'),
+			((), None),
+			# Falsy callable
+			(bool.__call__, 0),
+			(lambda v: v > '1.0.1', '1.0.0'),
+			(lambda v: not v, True),
 		]
 
 		for pair in invalid_schema_pairs:
-			with self.assertRaises(ValueError, msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'):
+			with self.assertRaises(
+					ValueError,
+					msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'
+			) as context:
 				validateItem(schema_val=pair[0], item_val=pair[1])
+			logger.debug(context.exception)
 
 
 if __name__ == '__main__':
