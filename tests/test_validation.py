@@ -30,6 +30,30 @@ class TestValidateItem(unittest.TestCase):
 			# Validate due to typing.Literal argument equality
 			(typing.Literal[21], 21),
 			(typing.Literal['asdf'], 'asdf'),
+			# Validate due to recursion into validateSchema
+			# For further testing of validateSchema, see TestValidateSchema
+			({'key': 'value'}, {'key': 'value', 'extra_key': None}),
+			# Validate due to type checking
+			(str, 'asdf'),
+			(int, 1234),
+			(object, object()),
+			(tuple, ()),
+			(type(None), None),
+			(callable, lambda _: True),
+			(type, str),
+			(typing.Iterable, []),
+			# Validate due to valid option in iterable
+			((1234, 'asdf', callable), lambda _: True),
+			([1234, 4321, 1111], 4321),
+			((1234, 'asdf', callable), 'asdf'),
+			(iter(['asdf', 'fdsa', 'ghjk']), 'ghjk'),
+			((v for v in (1234, 4321, 1111)), 4321),
+			# Validate due to truthy callable
+			(bool.__call__, 1),
+			(lambda v: v, True),
+			(lambda v: v > 50, 60),
+			(lambda v: not v, False),
+			(lambda v: v > '1.0.1', '2.0.0'),
 		]
 
 		for pair in valid_schema_pairs:
