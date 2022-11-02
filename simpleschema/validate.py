@@ -57,7 +57,7 @@ def validateSchema(item: dict, schema: dict) -> bool:
 			validateItem(item[schema_key], schema_val)
 		else:
 			for item_key, item_val in item.items():
-				logger.debug(f'Comparing schema key {schema_key}, schema value {schema_val} against item key {item_key}, item value {item_val}')
+				logger.debug(f'Comparing schema key "{schema_key}", schema value "{schema_val}" against item key "{item_key}", item value "{item_val}"')
 				try:
 					validateItem(item_key, schema_key)
 					validateItem(item_val, schema_val)
@@ -65,7 +65,7 @@ def validateSchema(item: dict, schema: dict) -> bool:
 				except ValueError as e:
 					logger.debug(e)
 			else:
-				raise ValueError(f'Schema key {schema_key}: schema value {schema_val} - No valid key/value pair found in item')
+				raise ValueError(f'Schema key "{schema_key}": schema value "{schema_val}" - No valid key/value pair found in item')
 	return True
 
 
@@ -83,7 +83,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 	Returns:
 		bool: If the value validates, returns True
 	"""
-	logger.debug(f'Validating schema constraint {schema_val} against item {item_val}')
+	logger.debug(f'Validating schema constraint "{schema_val}" against item "{item_val}"')
 	if schema_val == item_val:
 		return True
 	elif schema_val is typing.Any:
@@ -93,7 +93,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		if literal_args and literal_args[0] == item_val:
 			return True
 		else:
-			raise ValueError(f'Schema constraint {schema_val}, item {item_val} - Literal mismatch')
+			raise ValueError(f'Schema constraint "{schema_val}", item "{item_val}" - Literal mismatch')
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
 		return validateSchema(item_val, schema_val)
 	elif (
@@ -103,7 +103,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		if isinstance(item_val, schema_val):
 			return True
 		else:
-			raise ValueError(f'Schema constraint {schema_val}, item {item_val} - Type requirement mismatch')
+			raise ValueError(f'Schema constraint "{schema_val}", item "{item_val}" - Type requirement mismatch')
 	elif isinstance(schema_val, typing.Iterable) and not isinstance(schema_val, (str, bytes)):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
@@ -115,14 +115,14 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 				except ValueError as e:
 					logger.debug(e)
 		else:
-			raise ValueError(f'Schema constraint {schema_val}, item {item_val} - No item values validate for schema options')
+			raise ValueError(f'Schema constraint "{schema_val}", item "{item_val}" - No item values validate for schema options')
 	elif callable(schema_val):
 		if schema_val(item_val):
 			return True
 		else:
-			raise ValueError(f'Schema constraint {schema_val}, item {item_val} - Function does not validate')
+			raise ValueError(f'Schema constraint "{schema_val}", item "{item_val}" - Function does not validate')
 	else:
-		raise ValueError(f'Schema constraint {schema_val}, item {item_val} - Item does not validate')
+		raise ValueError(f'Schema constraint "{schema_val}", item "{item_val}" - Item does not validate')
 
 
 
