@@ -1,7 +1,7 @@
 
 import unittest
 from simpleschema.validate import validateItem, validateSchema
-from simpleschema import ObjectSchema
+from simpleschema import ObjectSchema, ValidationFailure
 import typing
 import logging
 import sys
@@ -45,7 +45,7 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(ValueError) as context:
+		with self.assertRaises(ValidationFailure) as context:
 			validateSchema(ValidOnlyIfInstantiated, self.test_schema)
 		logger.debug(context.exception)
 		self.assertTrue(validateSchema(ValidOnlyIfInstantiated(), self.test_schema))
@@ -60,10 +60,10 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(ValueError) as context:
+		with self.assertRaises(ValidationFailure) as context:
 			validateSchema(NeverValid, self.test_schema)
 		logger.debug(context.exception)
-		with self.assertRaises(ValueError) as context:
+		with self.assertRaises(ValidationFailure) as context:
 			validateSchema(NeverValid(), self.test_schema)
 		logger.debug(context.exception)
 
@@ -153,7 +153,7 @@ class TestValidateItem(unittest.TestCase):
 
 		for pair in invalid_schema_pairs:
 			with self.assertRaises(
-					ValueError,
+					ValidationFailure,
 					msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'
 			) as context:
 				validateItem(schema_val=pair[0], item_val=pair[1])
