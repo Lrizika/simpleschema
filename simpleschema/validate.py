@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 sentinel = object()
 
 
-def is_valid(item: dict, schema: dict) -> bool:
+def is_valid(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
 	"""
 	Convenience function that returns a bool instead of raising an exception on validation failure.
 		See simpleschema.validate for args
@@ -22,13 +22,13 @@ def is_valid(item: dict, schema: dict) -> bool:
 		return False
 
 
-def validateSchema(item: dict, schema: dict) -> bool:
+def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
 	"""
 	Validates a dict against a schema.
 
 	Args:
 		item (dict): The item to validate against the schema
-		schema (dict): The schema to validate.
+		schema (dict or ObjectSchema): The schema to validate.
 			Format:
 			{
 				'key': 'value',
@@ -43,6 +43,11 @@ def validateSchema(item: dict, schema: dict) -> bool:
 			- If the schema key is callable, validate against typing.any pairs in the item with a key that evaluates to True
 			Values use the same validation methods, with the following addition:
 			- If the value is a dictionary, recur
+
+			If schema is an ObjectSchema, it will be compared against the item's attributes.
+			This can be used to, for example, ensure that a class has a specific method,
+			or validate that an instance has been assigned an allowed value.
+			See simpleschema.ObjectSchema for example usage.
 
 	Raises:
 		ValueError: The key or value that has failed to validate, and the reason.
