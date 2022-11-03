@@ -1,6 +1,7 @@
 
 import typing
 import logging
+from simpleschema.helper_classes import ObjectSchema
 
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,9 @@ def validateSchema(item: dict, schema: dict) -> bool:
 			a ValueError, which includes information about the validation failure.
 	"""
 	logger.debug(f'Validating schema {schema} against item {item}')
+	if isinstance(schema, ObjectSchema):
+		logger.debug(f'Converting item {item} into dictionary for validation against ObjectSchema')
+		item = {key: getattr(item, key) for key in dir(item)}
 	for schema_key, schema_val in schema.items():
 		if schema_key in item:
 			validateItem(item[schema_key], schema_val)
@@ -106,7 +110,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
 				# This check prevents us from infinite recursion with certain items
-				# Where an item of the iterable is in and of itself iterable
+				# Where an item of the iterable is in and of itself the same iterable
 				try:
 					validateItem(item_val, schema_val_option)
 					return True
