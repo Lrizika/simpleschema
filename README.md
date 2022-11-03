@@ -17,7 +17,6 @@ my_item = {
 	'timestamp': 1667515052,
 	'method': 'GET',
 	'status': 200,
-	'user-agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0',
 	'json': {
 		'key': 'value'
 	},
