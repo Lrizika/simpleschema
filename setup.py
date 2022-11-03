@@ -16,7 +16,7 @@ EMAIL = 'lrizika.simpleschema@lrizika.com'
 VERSION = None
 LICENSE = 'MIT'
 AUTHOR = 'Lrizika'
-USE_TEST_PYPI = True
+USE_TEST_PYPI = False
 LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
 
 with open("README.md", 'r') as f:
