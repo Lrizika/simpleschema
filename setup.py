@@ -18,6 +18,7 @@ LICENSE = 'MIT'
 AUTHOR = 'Lrizika'
 USE_TEST_PYPI = False
 LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
+PYTHON_VERSION_REQUIRED = '>=3.8.0',
 
 with open("README.md", 'r') as f:
 	LONG_DESCRIPTION = f.read()
@@ -86,4 +87,5 @@ setup(
 	url=URL,
 	long_description_content_type=LONG_DESCRIPTION_CONTENT_TYPE,
 	packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+	python_requires=PYTHON_VERSION_REQUIRED,
 )
