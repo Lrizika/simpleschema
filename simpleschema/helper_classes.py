@@ -32,12 +32,12 @@ class InvalidClass:
 		pass
 	def required_b(self):
 		pass
-simpleschema.validate(ValidClass, my_schema)  # True
-simpleschema.validate(ValidClass(), my_schema)  # True
-simpleschema.validate(ValidOnlyIfInstantiated, my_schema)  # ValueError
-simpleschema.validate(ValidOnlyIfInstantiated(), my_schema)  # True
-simpleschema.validate(InvalidClass, my_schema)  # ValueError
-simpleschema.validate(InvalidClass(), my_schema)  # ValueError
+simpleschema.is_valid(ValidClass, my_schema)  # True
+simpleschema.is_valid(ValidClass(), my_schema)  # True
+simpleschema.is_valid(ValidOnlyIfInstantiated, my_schema)  # False
+simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)  # True
+simpleschema.is_valid(InvalidClass, my_schema)  # False
+simpleschema.is_valid(InvalidClass(), my_schema)  # False
 
 	"""
 

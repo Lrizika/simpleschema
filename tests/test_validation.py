@@ -1,7 +1,9 @@
 
 import unittest
 from simpleschema.validate import validateItem, validateSchema, is_valid
-from simpleschema import ObjectSchema, ValidationFailure
+from simpleschema import ObjectSchema
+from simpleschema.exceptions import SchemaValidationFailure, LiteralMismatch, TypeMismatch
+from simpleschema.exceptions import ItemValidationFailure  # TODO: Remove this
 import typing
 import logging
 import sys
@@ -32,7 +34,7 @@ class TestValidateSchema(unittest.TestCase):
 	def test_validates_failure(self):
 		for pair in self.invalid_schema_pairs:
 			with self.assertRaises(
-					ValidationFailure,
+					SchemaValidationFailure,
 					msg=f'Failed with schema {pair[0]}, item {pair[1]}'
 			) as context:
 				validateSchema(schema=pair[0], item=pair[1])
@@ -95,7 +97,7 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(ValidationFailure) as context:
+		with self.assertRaises(SchemaValidationFailure) as context:
 			validateSchema(ValidOnlyIfInstantiated, self.test_schema)
 		logger.debug(context.exception)
 		self.assertTrue(validateSchema(ValidOnlyIfInstantiated(), self.test_schema))
@@ -110,10 +112,10 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(ValidationFailure) as context:
+		with self.assertRaises(SchemaValidationFailure) as context:
 			validateSchema(NeverValid, self.test_schema)
 		logger.debug(context.exception)
-		with self.assertRaises(ValidationFailure) as context:
+		with self.assertRaises(SchemaValidationFailure) as context:
 			validateSchema(NeverValid(), self.test_schema)
 		logger.debug(context.exception)
 
@@ -203,7 +205,7 @@ class TestValidateItem(unittest.TestCase):
 
 		for pair in invalid_schema_pairs:
 			with self.assertRaises(
-					ValidationFailure,
+					ItemValidationFailure,
 					msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'
 			) as context:
 				validateItem(schema_val=pair[0], item_val=pair[1])
