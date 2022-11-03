@@ -1,6 +1,6 @@
 
 import unittest
-from simpleschema.validate import validateItem, validateSchema
+from simpleschema.validate import validateItem, validateSchema, is_valid
 from simpleschema import ObjectSchema, ValidationFailure
 import typing
 import logging
@@ -11,7 +11,57 @@ logger = logging.getLogger(__name__)
 
 
 class TestValidateSchema(unittest.TestCase):
-	pass
+	# Pairs of (schema, item)
+	valid_schema_pairs = (
+		({typing.Any: typing.Any}, {'a': 1}),
+	)
+	invalid_schema_pairs = (
+		({typing.Any: typing.Any}, {}),
+	)
+
+	def test_validates_success(self):
+		for pair in self.valid_schema_pairs:
+			try:
+				self.assertTrue(
+					validateSchema(schema=pair[0], item=pair[1]),
+				)
+			except Exception:
+				print(f'Failed with schema {pair[0]}, item {pair[1]}')
+				raise
+
+	def test_validates_failure(self):
+		for pair in self.invalid_schema_pairs:
+			with self.assertRaises(
+					ValidationFailure,
+					msg=f'Failed with schema {pair[0]}, item {pair[1]}'
+			) as context:
+				validateSchema(schema=pair[0], item=pair[1])
+			logger.debug(context.exception)
+
+
+class TestIsValid(unittest.TestCase):
+	valid_schema_pairs = TestValidateSchema.valid_schema_pairs
+	invalid_schema_pairs = TestValidateSchema.invalid_schema_pairs
+
+	def test_validates_success(self):
+		for pair in self.valid_schema_pairs:
+			try:
+				self.assertTrue(
+					is_valid(schema=pair[0], item=pair[1]),
+				)
+			except Exception:
+				print(f'Failed with schema {pair[0]}, item {pair[1]}')
+				raise
+
+	def test_validates_failure(self):
+		for pair in self.invalid_schema_pairs:
+			try:
+				self.assertFalse(
+					is_valid(schema=pair[0], item=pair[1]),
+				)
+			except Exception:
+				print(f'Failed with schema {pair[0]}, item {pair[1]}')
+				raise
 
 
 class TestValidateObjectSchema(unittest.TestCase):
