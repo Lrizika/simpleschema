@@ -1,6 +1,7 @@
 
 import unittest
 from simpleschema.validate import validateItem, validateSchema
+from simpleschema import ObjectSchema
 import typing
 import logging
 import sys
@@ -11,6 +12,60 @@ logger = logging.getLogger(__name__)
 
 class TestValidateSchema(unittest.TestCase):
 	pass
+
+
+class TestValidateObjectSchema(unittest.TestCase):
+	test_schema = ObjectSchema({
+		'required_method': callable,
+		'required_string_attribute': str,
+		('required_a_or', 'required_b'): object,
+	})
+
+	def test_valid(self):
+		class AlwaysValid:
+			required_string_attribute = 'string'
+
+			def required_method():
+				pass
+
+			def required_b(self):
+				pass
+
+		self.assertTrue(validateSchema(AlwaysValid, self.test_schema))
+		self.assertTrue(validateSchema(AlwaysValid(), self.test_schema))
+
+	def test_valid_if_instantiated(self):
+		class ValidOnlyIfInstantiated:
+			def __init__(self):
+				self.required_string_attribute = 'different string'
+
+			def required_method():
+				pass
+
+			def required_b(self):
+				pass
+
+		with self.assertRaises(ValueError) as context:
+			validateSchema(ValidOnlyIfInstantiated, self.test_schema)
+		logger.debug(context.exception)
+		self.assertTrue(validateSchema(ValidOnlyIfInstantiated(), self.test_schema))
+
+	def test_invalid(self):
+		class NeverValid:
+			required_string_attribute = 123
+
+			def required_method():
+				pass
+
+			def required_b(self):
+				pass
+
+		with self.assertRaises(ValueError) as context:
+			validateSchema(NeverValid, self.test_schema)
+		logger.debug(context.exception)
+		with self.assertRaises(ValueError) as context:
+			validateSchema(NeverValid(), self.test_schema)
+		logger.debug(context.exception)
 
 
 class TestValidateItem(unittest.TestCase):
