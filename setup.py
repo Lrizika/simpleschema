@@ -18,7 +18,7 @@ LICENSE = 'MIT'
 AUTHOR = 'Lrizika'
 USE_TEST_PYPI = False
 LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
-PYTHON_VERSION_REQUIRED = '>=3.8.0',
+PYTHON_VERSION_REQUIRED = '>=3.8.0'
 
 with open("README.md", 'r') as f:
 	LONG_DESCRIPTION = f.read()
