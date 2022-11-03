@@ -28,8 +28,7 @@ class ValidOnlyIfInstantiated:
 		pass
 class InvalidClass:
 	required_string_attribute = 123
-	def required_method():
-		pass
+	required_method = 'not_a_callable'
 	def required_b(self):
 		pass
 simpleschema.is_valid(ValidClass, my_schema)  # True

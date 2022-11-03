@@ -105,9 +105,7 @@ class TestValidateObjectSchema(unittest.TestCase):
 	def test_invalid(self):
 		class NeverValid:
 			required_string_attribute = 123
-
-			def required_method():
-				pass
+			required_method = 'not_a_callable'
 
 			def required_b(self):
 				pass
