@@ -41,7 +41,7 @@ def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool
 			- Direct value comparison
 			- If the constraint is typing.Literal, compare its value to the value of the item
 			- If the constraint is a dictionary, recursively validate the item against the constraint as a schema
-			- If the constraint is a type (or type hint, like typing.Iterable), the item must be an instance of that type
+			- If the constraint is a type (or type hint, like typing.Iterable), check if the item is an instance of that type
 			- If the constraint is iterable, try each value as a constraint against the item. If any validate, the constraint validates.
 			- If the constraint is callable, evaluate it against the item
 
