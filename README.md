@@ -1,14 +1,20 @@
 
 # simpleschema
 
-A simple schema validator for Python
+**simpleschema** is a library for validating dicts or objects to ensure they have a given structure. A use case for this might be to verify integrity of received data, parse event types based on a specification, or ensure arbitrary objects provide certain required methods.
 
-Basic usage:
+It is intended to provide advanced validation methods with a simple, no-fuss interface.
+
+Validation constraints can be a specific value, a type (or typelike), a set of options, a user-defined validation callable, or even another schema. See Validation Details or `help(simpleschema.validateSchema)` for more information.
+
+`simpleschema.validateSchema` validates an item against a schema, returning `True` or raising a `simpleschema.SchemaValidationFailure` if it fails to validate. `simpleschema.is_valid` provides a convenience wrapper to `validateSchema`, instead returning `False` on validation failure.
+
+## Example Usage:
 ```python
 import simpleschema
 
 my_schema = {
-	'method': 'GET',
+	'method': ['GET', 'POST'],
 	'timestamp': int,
 	'version': lambda v: v >= '1.0.0',
 }
@@ -25,7 +31,7 @@ my_item = {
 
 bad_item = {
 	'timestamp': '1667515052',
-	'method': 'POST',
+	'method': 'PUT',
 	'version': '0.1.9',
 }
 
@@ -33,7 +39,7 @@ simpleschema.is_valid(item=my_item, schema=my_schema)  # True
 simpleschema.is_valid(item=bad_item, schema=my_schema)  # False
 ```
 
-Schemas can also be used to validate object structure:
+Schemata can also be used to validate object structure:
 ```python
 import simpleschema
 
@@ -71,6 +77,12 @@ simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)  # True
 simpleschema.is_valid(InvalidClass, my_schema)  # False
 simpleschema.is_valid(InvalidClass(), my_schema)  # False
 ```
+
+## Installation
+
+`pip install simpleschema`
+
+## Validation Details
 
 Keys-value pairs in the schema are compared as constraints against each pair in the item, by the following methods, in order:
 - Direct value comparison
