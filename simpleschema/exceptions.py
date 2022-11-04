@@ -29,6 +29,13 @@ class ItemValidationFailure(ValidationFailure):
 	pass
 
 
+class RegExMismatch(ItemValidationFailure):
+	"""
+	Raised when an item does not match a re.Pattern constraint
+	"""
+	pass
+
+
 class LiteralMismatch(ItemValidationFailure):
 	"""
 	Raised when an item does not match a typing.Literal constraint

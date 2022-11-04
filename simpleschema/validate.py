@@ -4,7 +4,7 @@ import logging
 import re
 import simpleschema
 from simpleschema.helper_classes import ObjectSchema
-from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, TypeMismatch, LiteralMismatch, IterableMismatch, CallableMismatch, ValueMismatch
+from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, TypeMismatch, LiteralMismatch, IterableMismatch, CallableMismatch, ValueMismatch, RegExMismatch
 
 
 logger = logging.getLogger(__name__)
@@ -108,11 +108,12 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 	elif isinstance(schema_val, re.Pattern):
 		if schema_val.search(item_val) is not None:
 			return True
+		raise RegExMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	elif typing.get_origin(schema_val) is typing.Literal:
 		literal_args = typing.get_args(schema_val)
 		if literal_args and literal_args[0] == item_val:
 			return True
-		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - Literal mismatch')
+		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
 		return validateSchema(item_val, schema_val)
 	elif isinstance(schema_val, simpleschema.ObjectSchema):
@@ -123,7 +124,7 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 	):
 		if isinstance(item_val, schema_val):
 			return True
-		raise TypeMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - Type requirement mismatch')
+		raise TypeMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	elif isinstance(schema_val, typing.Iterable) and not isinstance(schema_val, (str, bytes)):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
@@ -134,13 +135,13 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 					return True
 				except ItemValidationFailure as e:
 					logger.debug(e)
-		raise IterableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - No item values validate for schema options')
+		raise IterableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	elif callable(schema_val):
 		if schema_val(item_val):
 			return True
-		raise CallableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - Function does not validate')
+		raise CallableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	else:
-		raise ValueMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - Constraint does not match any additional validation patterns')
+		raise ValueMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 
 
 
