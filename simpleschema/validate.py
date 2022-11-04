@@ -1,6 +1,7 @@
 
 import typing
 import logging
+import simpleschema
 from simpleschema.helper_classes import ObjectSchema
 from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, TypeMismatch, LiteralMismatch, IterableMismatch, CallableMismatch, ValueMismatch
 
@@ -109,6 +110,8 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 			return True
 		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}` - Literal mismatch')
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
+		return validateSchema(item_val, schema_val)
+	elif isinstance(schema_val, simpleschema.ObjectSchema):
 		return validateSchema(item_val, schema_val)
 	elif (
 			isinstance(schema_val, type) or

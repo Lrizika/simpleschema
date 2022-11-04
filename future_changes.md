@@ -1,10 +1,10 @@
 
 TODO list:
 - Improve documentation
-	- Top Priority!
-- Add custom exceptions
+- Improve custom exceptions
 	- Look into automagically appending key/value info, rather than adding it manually every time
-- Add tests
+- Improve tests
+	- Test for specific item validation exceptions
 - Add shortcut failure option
 	- Terminology?
 	- Fails the validation if a key matches but the value does not
