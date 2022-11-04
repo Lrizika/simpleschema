@@ -2,7 +2,7 @@
 import unittest
 from simpleschema.validate import validateItem, validateSchema, is_valid
 from simpleschema import ObjectSchema
-from simpleschema.exceptions import SchemaValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch
+from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch
 import typing
 import logging
 import sys
@@ -211,7 +211,6 @@ class TestValidateItem(unittest.TestCase):
 
 	def test_value_mismatch(self):
 		schema_pairs = [
-			# Invalid equalities
 			(object(), object()),  # Noteably not the same object
 			(1234, 1),
 			(None, 0),
@@ -222,7 +221,19 @@ class TestValidateItem(unittest.TestCase):
 
 		self.validate_failure(schema_pairs, ValueMismatch)
 
-	def validate_failure(self, schema_pairs: typing.List[tuple], exception_type: Exception):
+	def validate_failure(
+			self,
+			schema_pairs: typing.List[tuple],
+			exception_type: typing.Type[ItemValidationFailure]
+	):
+		"""
+		Iterates through (schema constraint, item) pairs, and verifies that they
+		raise the appropriate subtype of ItemValidationFailure
+
+		Args:
+			schema_pairs (typing.List[tuple]): Pairs of (schema constraint, item) to validate
+			exception_type (typing.Type[ItemValidationFailure]): Subtype it should raise
+		"""
 		for pair in schema_pairs:
 			with self.assertRaises(
 					exception_type,
