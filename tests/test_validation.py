@@ -2,8 +2,7 @@
 import unittest
 from simpleschema.validate import validateItem, validateSchema, is_valid
 from simpleschema import ObjectSchema
-from simpleschema.exceptions import SchemaValidationFailure, LiteralMismatch, TypeMismatch
-from simpleschema.exceptions import ItemValidationFailure  # TODO: Remove this
+from simpleschema.exceptions import SchemaValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch
 import typing
 import logging
 import sys
@@ -173,37 +172,60 @@ class TestValidateItem(unittest.TestCase):
 				print(f'Failed with schema constraint {pair[0]}, item {pair[1]}')
 				raise
 
-	def test_validates_failure(self):
-		invalid_schema_pairs = [
-			# Invalid equalities
-			(object(), object()),  # Noteably not the same object
-			(1234, 1),
-			(None, 0),
-			((), 0),
-			('asdf', 'a'),
-			(b'asdf', 'a'),
-			# Invalid typing.Literal
+	def test_literal_mismatch(self):
+		schema_pairs = [
 			(typing.Literal[21], 1),
 			(typing.Literal['a'], 1),
-			# Invalid types
+		]
+
+		self.validate_failure(schema_pairs, LiteralMismatch)
+
+	def test_type_mismatch(self):
+		schema_pairs = [
 			(str, 1),
 			(int, '1'),
-			(callable, 1),
+			(typing.Callable, 1),
 			(type, 1),
 			(str, b'asdf'),
-			# Missing option in iterable
+		]
+
+		self.validate_failure(schema_pairs, TypeMismatch)
+
+	def test_iterable_mismatch(self):
+		schema_pairs = [
 			([1, 2], 3),
 			((1, 2, 3), '2'),
 			((), None),
-			# Falsy callable
+		]
+
+		self.validate_failure(schema_pairs, IterableMismatch)
+
+	def test_callable_mismatch(self):
+		schema_pairs = [
 			(bool.__call__, 0),
 			(lambda v: v > '1.0.1', '1.0.0'),
 			(lambda v: not v, True),
 		]
 
-		for pair in invalid_schema_pairs:
+		self.validate_failure(schema_pairs, CallableMismatch)
+
+	def test_value_mismatch(self):
+		schema_pairs = [
+			# Invalid equalities
+			(object(), object()),  # Noteably not the same object
+			(1234, 1),
+			(None, 0),
+			(0, ()),
+			('asdf', 'a'),
+			(b'asdf', 'a'),
+		]
+
+		self.validate_failure(schema_pairs, ValueMismatch)
+
+	def validate_failure(self, schema_pairs: typing.List[tuple], exception_type: Exception):
+		for pair in schema_pairs:
 			with self.assertRaises(
-					ItemValidationFailure,
+					exception_type,
 					msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'
 			) as context:
 				validateItem(schema_val=pair[0], item_val=pair[1])
