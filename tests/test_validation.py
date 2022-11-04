@@ -2,10 +2,11 @@
 import unittest
 from simpleschema.validate import validateItem, validateSchema, is_valid
 from simpleschema import ObjectSchema
-from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch
+from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch, RegExMismatch
 import typing
 import logging
 import sys
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -134,6 +135,8 @@ class TestValidateItem(unittest.TestCase):
 			(typing.Any, None),
 			(typing.Any, typing.Any),
 			(typing.Any, object()),
+			# Validate due to regex match
+			(re.compile(r'sd'), 'asdf'),
 			# Validate due to typing.Literal argument equality
 			(typing.Literal[21], 21),
 			(typing.Literal['asdf'], 'asdf'),
@@ -171,6 +174,13 @@ class TestValidateItem(unittest.TestCase):
 			except Exception:
 				print(f'Failed with schema constraint {pair[0]}, item {pair[1]}')
 				raise
+
+	def test_regex_mismatch(self):
+		schema_pairs = [
+			(re.compile(r'ds'), 'asdf'),
+		]
+
+		self.validate_failure(schema_pairs, RegExMismatch)
 
 	def test_literal_mismatch(self):
 		schema_pairs = [
