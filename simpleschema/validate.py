@@ -1,6 +1,7 @@
 
 import typing
 import logging
+import re
 import simpleschema
 from simpleschema.helper_classes import ObjectSchema
 from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, TypeMismatch, LiteralMismatch, IterableMismatch, CallableMismatch, ValueMismatch
@@ -104,6 +105,9 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		return True
 	elif schema_val is typing.Any:
 		return True
+	elif isinstance(schema_val, re.Pattern):
+		if schema_val.search(item_val) is not None:
+			return True
 	elif typing.get_origin(schema_val) is typing.Literal:
 		literal_args = typing.get_args(schema_val)
 		if literal_args and literal_args[0] == item_val:
