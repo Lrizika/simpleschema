@@ -2,6 +2,8 @@
 TODO list:
 - Improve documentation
 	- Correct for new return info on validateSchema
+	- Add regex matching examples
+	- Add reasoning for using typing.Callable
 - Improve custom exceptions
 	- Look into automagically appending key/value info, rather than adding it manually every time
 - Improve tests
