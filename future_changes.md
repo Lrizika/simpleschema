@@ -15,8 +15,7 @@ TODO list:
 		- Fail if any key matches without a value match
 - Add constraint and item to exceptions
 	- Remove custom messages, add relevant stuff to __repr__
-- Change return on validateSchema to (result, list_of_exceptions)
-	- Continue on failure by default
+- Add option to abort on first failure
 - Add logical operators
 	- simpleschema.logical.And, .Or, .Not
 

@@ -33,12 +33,7 @@ class TestValidateSchema(unittest.TestCase):
 
 	def test_validates_failure(self):
 		for pair in self.invalid_schema_pairs:
-			with self.assertRaises(
-					SchemaValidationFailure,
-					msg=f'Failed with schema {pair[0]}, item {pair[1]}'
-			) as context:
-				validateSchema(schema=pair[0], item=pair[1])
-			logger.debug(context.exception)
+			self.assertFalse(validateSchema(schema=pair[0], item=pair[1])[0])
 
 
 class TestIsValid(unittest.TestCase):
@@ -97,9 +92,7 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(SchemaValidationFailure) as context:
-			validateSchema(ValidOnlyIfInstantiated, self.test_schema)
-		logger.debug(context.exception)
+		self.assertFalse(validateSchema(ValidOnlyIfInstantiated, self.test_schema)[0])
 		self.assertTrue(validateSchema(ValidOnlyIfInstantiated(), self.test_schema))
 
 	def test_invalid(self):
@@ -110,12 +103,8 @@ class TestValidateObjectSchema(unittest.TestCase):
 			def required_b(self):
 				pass
 
-		with self.assertRaises(SchemaValidationFailure) as context:
-			validateSchema(NeverValid, self.test_schema)
-		logger.debug(context.exception)
-		with self.assertRaises(SchemaValidationFailure) as context:
-			validateSchema(NeverValid(), self.test_schema)
-		logger.debug(context.exception)
+		self.assertFalse(validateSchema(NeverValid, self.test_schema)[0])
+		self.assertFalse(validateSchema(NeverValid(), self.test_schema)[0])
 
 
 class TestValidateItem(unittest.TestCase):

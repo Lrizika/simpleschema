@@ -19,10 +19,7 @@ def is_valid(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
 	Returns:
 		bool: Whether the schema is valid for the item
 	"""
-	try:
-		return validateSchema(item, schema)
-	except SchemaValidationFailure:
-		return False
+	return validateSchema(item, schema)[0]
 
 
 def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
@@ -63,6 +60,9 @@ def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool
 			Note that this *only* returns True. If the schema fails to validate, we instead raise
 			a ValidationFailure, which includes information about the validation failure.
 	"""
+	validation_failures = []
+	validation_status = True
+
 	logger.debug(f'Validating schema {schema} against item {item}')
 	if isinstance(schema, ObjectSchema):
 		logger.debug(f'Converting item {item} into dictionary for validation against ObjectSchema')
@@ -71,8 +71,9 @@ def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool
 		if schema_key in item:
 			try:
 				validateItem(item[schema_key], schema_val)
-			except (ItemValidationFailure, SchemaValidationFailure) as e:
-				raise SchemaValidationFailure(e)
+			except ItemValidationFailure as e:
+				validation_status = False
+				validation_failures.append(SchemaValidationFailure(e))
 		else:
 			for item_key, item_val in item.items():
 				logger.debug(f'Comparing schema key `{schema_key}`, schema value `{schema_val}` against item key `{item_key}`, item value `{item_val}`')
@@ -83,8 +84,9 @@ def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool
 				except (ItemValidationFailure, SchemaValidationFailure) as e:
 					logger.debug(e)
 			else:
-				raise SchemaValidationFailure(f'Schema key `{schema_key}`: schema value `{schema_val}` - No valid key/value pair found in item')
-	return True
+				validation_status = False
+				validation_failures.append(SchemaValidationFailure(f'Schema key `{schema_key}`: schema value `{schema_val}` - No valid key/value pair found in item'))
+	return (validation_status, validation_failures)
 
 
 def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
@@ -116,9 +118,9 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 			return True
 		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
 	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
-		return validateSchema(item_val, schema_val)
+		return validateSchema(item_val, schema_val)[0]
 	elif isinstance(schema_val, simpleschema.ObjectSchema):
-		return validateSchema(item_val, schema_val)
+		return validateSchema(item_val, schema_val)[0]
 	elif (
 			isinstance(schema_val, type) or
 			callable(getattr(schema_val, "__instancecheck__", None))
