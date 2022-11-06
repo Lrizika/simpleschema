@@ -82,7 +82,7 @@ def validateSchema(
 				validateItem(item[schema_key], schema_val)
 			except (ItemValidationFailure, SchemaValidationFailure) as e:
 				validation_status = False
-				validation_failures.append(SchemaValidationFailure(e))
+				validation_failures.append(SchemaValidationFailure(schema_key, child_exception=e))
 		else:
 			for item_key, item_val in item.items():
 				logger.debug(f'Comparing schema key `{schema_key}`, schema value `{schema_val}` against item key `{item_key}`, item value `{item_val}`')
@@ -94,7 +94,7 @@ def validateSchema(
 					logger.debug(e)
 			else:
 				validation_status = False
-				validation_failures.append(SchemaValidationFailure(f'Schema key `{schema_key}`: schema value `{schema_val}` - No valid key/value pair found in item'))
+				validation_failures.append(SchemaValidationFailure(schema_key))
 	return (validation_status, validation_failures)
 
 
@@ -120,24 +120,24 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 	elif isinstance(schema_val, re.Pattern):
 		if schema_val.search(item_val) is not None:
 			return True
-		raise RegExMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise RegExMismatch(schema_val, item_val)
 	elif typing.get_origin(schema_val) is typing.Literal:
 		literal_args = typing.get_args(schema_val)
 		if literal_args and literal_args[0] == item_val:
 			return True
-		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise LiteralMismatch(schema_val, item_val)
 	elif isinstance(schema_val, dict) or isinstance(schema_val, simpleschema.ObjectSchema):
 		child_schema_result = validateSchema(item_val, schema_val)
 		if child_schema_result[0] is True:
 			return True
-		raise SchemaValidationFailure(child_schema_result)
+		raise SchemaValidationFailure(schema_val, child_schema_result=child_schema_result)
 	elif (
 			isinstance(schema_val, type) or
 			callable(getattr(schema_val, "__instancecheck__", None))
 	):
 		if isinstance(item_val, schema_val):
 			return True
-		raise TypeMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise TypeMismatch(schema_val, item_val)
 	elif isinstance(schema_val, typing.Iterable) and not isinstance(schema_val, (str, bytes)):
 		for schema_val_option in schema_val:
 			if schema_val_option != schema_val:
@@ -148,13 +148,13 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 					return True
 				except ItemValidationFailure as e:
 					logger.debug(e)
-		raise IterableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise IterableMismatch(schema_val, item_val)
 	elif callable(schema_val):
 		if schema_val(item_val):
 			return True
-		raise CallableMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise CallableMismatch(schema_val, item_val)
 	else:
-		raise ValueMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
+		raise ValueMismatch(schema_val, item_val)
 
 
 
