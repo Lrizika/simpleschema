@@ -22,7 +22,16 @@ def is_valid(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
 	return validateSchema(item, schema)[0]
 
 
-def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
+def validateSchema(
+		item: dict,
+		schema: typing.Union[dict, ObjectSchema]
+) -> typing.Tuple[
+		bool,
+		typing.List[typing.Union[
+			SchemaValidationFailure,
+			ItemValidationFailure
+		]]
+]:
 	"""
 	Validates a dict against a schema.
 
@@ -71,7 +80,7 @@ def validateSchema(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool
 		if schema_key in item:
 			try:
 				validateItem(item[schema_key], schema_val)
-			except ItemValidationFailure as e:
+			except (ItemValidationFailure, SchemaValidationFailure) as e:
 				validation_status = False
 				validation_failures.append(SchemaValidationFailure(e))
 		else:
@@ -117,10 +126,11 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		if literal_args and literal_args[0] == item_val:
 			return True
 		raise LiteralMismatch(f'Schema constraint `{schema_val}`, item `{item_val}`')
-	elif isinstance(schema_val, dict) and isinstance(item_val, dict):
-		return validateSchema(item_val, schema_val)[0]
-	elif isinstance(schema_val, simpleschema.ObjectSchema):
-		return validateSchema(item_val, schema_val)[0]
+	elif isinstance(schema_val, dict) or isinstance(schema_val, simpleschema.ObjectSchema):
+		child_schema_result = validateSchema(item_val, schema_val)
+		if child_schema_result[0] is True:
+			return True
+		raise SchemaValidationFailure(child_schema_result)
 	elif (
 			isinstance(schema_val, type) or
 			callable(getattr(schema_val, "__instancecheck__", None))
