@@ -17,6 +17,8 @@ TODO list:
 	- Remove custom messages, add relevant stuff to __repr__
 - Change return on validateSchema to (result, list_of_exceptions)
 	- Continue on failure by default
+- Add logical operators
+	- simpleschema.logical.And, .Or, .Not
 
 Bugs to fix:
 - None currently known!
