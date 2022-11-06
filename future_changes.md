@@ -1,10 +1,12 @@
 
 TODO list:
 - Improve documentation
+	- Correct for new return info on validateSchema
 - Improve custom exceptions
 	- Look into automagically appending key/value info, rather than adding it manually every time
 - Improve tests
 	- Test for specific item validation exceptions
+	- Test for multiple failures, appropriate raised exceptions
 - Add shortcut failure option
 	- Terminology?
 	- Fails the validation if a key matches but the value does not
