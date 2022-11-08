@@ -17,8 +17,6 @@ TODO list:
 	- Add matching method options to ObjectSchema and DictSchema
 		- Fail if no matches (default)
 		- Fail if any key matches without a value match
-- Add constraint and item to exceptions
-	- Remove custom messages, add relevant stuff to __repr__
 - Add option to abort on first failure
 - Add logical operators
 	- simpleschema.logical.And, .Or, .Not
