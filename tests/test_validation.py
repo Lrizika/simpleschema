@@ -1,6 +1,6 @@
 
 import unittest
-from simpleschema.validate import validateItem, validateSchema, is_valid
+from simpleschema.validate import validateItem, validateSchema, isValid
 from simpleschema import ObjectSchema
 from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch, RegExMismatch
 import typing
@@ -44,7 +44,7 @@ class TestIsValid(unittest.TestCase):
 		for pair in self.valid_schema_pairs:
 			try:
 				self.assertTrue(
-					is_valid(schema=pair[0], item=pair[1]),
+					isValid(schema=pair[0], item=pair[1]),
 				)
 			except Exception:
 				print(f'Failed with schema {pair[0]}, item {pair[1]}')
@@ -54,7 +54,7 @@ class TestIsValid(unittest.TestCase):
 		for pair in self.invalid_schema_pairs:
 			try:
 				self.assertFalse(
-					is_valid(schema=pair[0], item=pair[1]),
+					isValid(schema=pair[0], item=pair[1]),
 				)
 			except Exception:
 				print(f'Failed with schema {pair[0]}, item {pair[1]}')

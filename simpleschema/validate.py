@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 sentinel = object()
 
 
-def is_valid(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
+def isValid(item: dict, schema: typing.Union[dict, ObjectSchema]) -> bool:
 	"""
 	Convenience function that returns a bool instead of raising an exception on validation failure.
 		See simpleschema.validate for args
@@ -158,6 +158,5 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 		raise CallableMismatch(schema_val, item_val)
 	else:
 		raise ValueMismatch(schema_val, item_val)
-
 
 

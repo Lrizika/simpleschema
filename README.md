@@ -7,7 +7,7 @@ It is intended to provide advanced validation methods with a simple, no-fuss int
 
 Validation constraints can be a specific value, a type (or typelike), a set of options, a user-defined validation callable, or even another schema. See [Validation Details](#Validation-Details) or `help(simpleschema.validateSchema)` for more information.
 
-`simpleschema.validateSchema` validates an item against a schema, returning `True` or raising a `simpleschema.SchemaValidationFailure` if it fails to validate. `simpleschema.is_valid` provides a convenience wrapper to `validateSchema`, instead returning `False` on validation failure.
+`simpleschema.validateSchema` validates an item against a schema, returning `True` or raising a `simpleschema.SchemaValidationFailure` if it fails to validate. `simpleschema.isValid` provides a convenience wrapper to `validateSchema`, instead returning `False` on validation failure.
 
 ## Example Usage:
 ```python
@@ -35,8 +35,8 @@ bad_item = {
 	'version': '0.1.9',
 }
 
-simpleschema.is_valid(item=my_item, schema=my_schema)  # True
-simpleschema.is_valid(item=bad_item, schema=my_schema)  # False
+simpleschema.isValid(item=my_item, schema=my_schema)  # True
+simpleschema.isValid(item=bad_item, schema=my_schema)  # False
 ```
 
 Schemata can also be used to validate object structure:
@@ -70,12 +70,12 @@ class InvalidClass:
 	def required_b(self):
 		pass
 
-simpleschema.is_valid(ValidClass, my_schema)  # True
-simpleschema.is_valid(ValidClass(), my_schema)  # True
-simpleschema.is_valid(ValidOnlyIfInstantiated, my_schema)  # False
-simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)  # True
-simpleschema.is_valid(InvalidClass, my_schema)  # False
-simpleschema.is_valid(InvalidClass(), my_schema)  # False
+simpleschema.isValid(ValidClass, my_schema)  # True
+simpleschema.isValid(ValidClass(), my_schema)  # True
+simpleschema.isValid(ValidOnlyIfInstantiated, my_schema)  # False
+simpleschema.isValid(ValidOnlyIfInstantiated(), my_schema)  # True
+simpleschema.isValid(InvalidClass, my_schema)  # False
+simpleschema.isValid(InvalidClass(), my_schema)  # False
 ```
 
 

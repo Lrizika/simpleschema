@@ -38,31 +38,31 @@ class InvalidClass:
 
 
 print(
-	'simpleschema.is_valid(ValidClass, my_schema)',
-	simpleschema.is_valid(ValidClass, my_schema)
+	'simpleschema.isValid(ValidClass, my_schema)',
+	simpleschema.isValid(ValidClass, my_schema)
 )  # True
 print(
-	'simpleschema.is_valid(ValidClass(), my_schema)',
-	simpleschema.is_valid(ValidClass(), my_schema)
+	'simpleschema.isValid(ValidClass(), my_schema)',
+	simpleschema.isValid(ValidClass(), my_schema)
 )  # True
 print(
-	'simpleschema.is_valid(ValidClass(), my_schema)',
-	simpleschema.is_valid(ValidClass(), my_schema)
+	'simpleschema.isValid(ValidClass(), my_schema)',
+	simpleschema.isValid(ValidClass(), my_schema)
 )  # True
 print(
-	'simpleschema.is_valid(ValidOnlyIfInstantiated, my_schema)',
-	simpleschema.is_valid(ValidOnlyIfInstantiated, my_schema)
+	'simpleschema.isValid(ValidOnlyIfInstantiated, my_schema)',
+	simpleschema.isValid(ValidOnlyIfInstantiated, my_schema)
 )  # False
 print(
-	'simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)',
-	simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)
+	'simpleschema.isValid(ValidOnlyIfInstantiated(), my_schema)',
+	simpleschema.isValid(ValidOnlyIfInstantiated(), my_schema)
 )  # True
 print(
-	'simpleschema.is_valid(InvalidClass, my_schema)',
-	simpleschema.is_valid(InvalidClass, my_schema)
+	'simpleschema.isValid(InvalidClass, my_schema)',
+	simpleschema.isValid(InvalidClass, my_schema)
 )  # False
 print(
-	'simpleschema.is_valid(InvalidClass(), my_schema)',
-	simpleschema.is_valid(InvalidClass(), my_schema)
+	'simpleschema.isValid(InvalidClass(), my_schema)',
+	simpleschema.isValid(InvalidClass(), my_schema)
 )  # False
 
