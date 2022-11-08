@@ -118,8 +118,11 @@ def validateItem(item_val: typing.Any, schema_val: typing.Any) -> bool:
 	elif schema_val is typing.Any:
 		return True
 	elif isinstance(schema_val, re.Pattern):
-		if schema_val.search(item_val) is not None:
-			return True
+		try:
+			if schema_val.search(item_val) is not None:
+				return True
+		except TypeError as e:
+			raise RegExMismatch(schema_val, item_val, child_exception=e)
 		raise RegExMismatch(schema_val, item_val)
 	elif typing.get_origin(schema_val) is typing.Literal:
 		literal_args = typing.get_args(schema_val)
