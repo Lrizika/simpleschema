@@ -1,6 +1,4 @@
 
-sentinel = object()
-
 
 class SimpleSchemaException(Exception):
 	"""

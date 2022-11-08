@@ -6,7 +6,6 @@ from simpleschema.exceptions import ConstraintException, SchemaValidationFailure
 from simpleschema.matchers import ConstraintMatcher, AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
 
 logger = logging.getLogger(__name__)
-sentinel = object()
 
 
 class SchemaValidator:
