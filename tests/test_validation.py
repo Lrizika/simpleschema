@@ -141,12 +141,6 @@ class TestValidateItem(unittest.TestCase):
 			(callable, lambda _: True),
 			(type, str),
 			(typing.Iterable, []),
-			# Validate due to valid option in iterable
-			((1234, 'asdf', callable), lambda _: True),
-			([1234, 4321, 1111], 4321),
-			((1234, 'asdf', callable), 'asdf'),
-			(iter(['asdf', 'fdsa', 'ghjk']), 'ghjk'),
-			((v for v in (1234, 4321, 1111)), 4321),
 			# Validate due to truthy callable
 			(bool.__call__, 1),
 			(lambda v: v, True),
@@ -158,7 +152,7 @@ class TestValidateItem(unittest.TestCase):
 		for pair in valid_schema_pairs:
 			try:
 				self.assertTrue(
-					validateItem(schema_val=pair[0], item_val=pair[1]),
+					validateItem(constraint=pair[0], item=pair[1]),
 				)
 			except Exception:
 				print(f'Failed with schema constraint {pair[0]}, item {pair[1]}')
@@ -189,15 +183,6 @@ class TestValidateItem(unittest.TestCase):
 		]
 
 		self.validate_failure(schema_pairs, TypeMismatch)
-
-	def test_iterable_mismatch(self):
-		schema_pairs = [
-			([1, 2], 3),
-			((1, 2, 3), '2'),
-			((), None),
-		]
-
-		self.validate_failure(schema_pairs, IterableMismatch)
 
 	def test_callable_mismatch(self):
 		schema_pairs = [
@@ -238,7 +223,7 @@ class TestValidateItem(unittest.TestCase):
 					exception_type,
 					msg=f'Failed with schema constraint {pair[0]}, item {pair[1]}'
 			) as context:
-				validateItem(schema_val=pair[0], item_val=pair[1])
+				validateItem(constraint=pair[0], item=pair[1])
 			logger.debug(context.exception)
 
 
