@@ -10,12 +10,12 @@ class TestMatcher(unittest.TestCase):
 	matcher_args = []
 	matcher_kwargs = {}
 	raises = None
-	valid_pairs = {}
-	invalid_pairs = {}
+	valid_pairs = []  # List[Tuple[Any, Any]]
+	invalid_pairs = []
 	inapplicable_constraints = []
 
 	def test_isApplicable_True(self):
-		for constraint in list(self.valid_pairs.keys()) + list(self.invalid_pairs.keys()):
+		for constraint, _ in self.valid_pairs + self.invalid_pairs:
 			self.assertTrue(
 				self.matcher.isApplicable(constraint),
 				msg=f'Failed with constraint {constraint}'
@@ -37,7 +37,7 @@ class TestMatcher(unittest.TestCase):
 			)
 
 	def test_validate_success(self):
-		for constraint, item in self.valid_pairs.items():
+		for constraint, item in self.valid_pairs:
 			self.assertTrue(
 				self.matcher.validate(item, constraint),
 				msg=f'Failed with constraint {constraint}, item {item}'
@@ -48,7 +48,7 @@ class TestMatcher(unittest.TestCase):
 			)
 
 	def test_validate_failure(self):
-		for constraint, item in self.invalid_pairs.items():
+		for constraint, item in self.invalid_pairs:
 			with self.assertRaises(
 					self.raises,
 					msg=f'Failed with constraint {constraint}, item {item}'

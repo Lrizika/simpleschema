@@ -13,8 +13,8 @@ class TestConstraintMatcher(matcher_test_framework.TestMatcher):
 	matcher_args = []
 	matcher_kwargs = {}
 	raises = NotImplementedError
-	valid_pairs = {}
-	invalid_pairs = {}
+	valid_pairs = []
+	invalid_pairs = []
 	inapplicable_constraints = [None, typing.Any, '', 'asdf', re.compile(r'.*'), callable]
 	items = [None, typing.Any, '', 'asdf', re.compile(r'.*'), callable]
 
