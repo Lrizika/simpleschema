@@ -20,6 +20,7 @@ TODO list:
 - Add option to abort on first failure
 - Add logical operators
 	- simpleschema.logical.And, .Or, .Not
+	- Consider how to implement this well
 
 Bugs to fix:
 - None currently known!

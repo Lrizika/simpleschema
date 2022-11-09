@@ -1,6 +1,14 @@
 
 
-class ObjectSchema(dict):
+class Schema(dict):
+	pass
+
+
+class DictSchema(Schema):
+	pass
+
+
+class ObjectSchema(Schema):
 	"""
 	A schema for an object, rather than a dictionary
 	ObjectSchema are identical to dicts

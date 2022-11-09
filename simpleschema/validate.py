@@ -1,7 +1,7 @@
 
 import typing
 import logging
-from simpleschema.helper_classes import ObjectSchema
+from simpleschema.schema_types import ObjectSchema
 from simpleschema.exceptions import ConstraintException, SchemaValidationFailure, ItemValidationFailure, ValueMismatch
 from simpleschema.matchers import ConstraintMatcher, AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
 
