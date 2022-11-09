@@ -1,5 +1,14 @@
 
 
+class Literal:
+	"""
+	Used for wrapping literal objects (e.g. `callable`)
+	that would otherwise be valid constraints
+	"""
+	def __init__(self, obj: object) -> None:
+		self.obj = obj
+
+
 class Schema(dict):
 	pass
 

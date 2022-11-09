@@ -5,6 +5,7 @@ import re
 import logging
 from simpleschema.matchers import LiteralMatcher
 from simpleschema.exceptions import LiteralMismatch
+import simpleschema
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +17,12 @@ class TestLiteralMatcher(unittest.TestCase):
 		typing.Literal['asdf']: 'asdf',
 		typing.Literal[None]: None,
 		typing.Literal[True]: True,
+		simpleschema.Literal(callable): callable,
+		simpleschema.Literal(re): re,
 	}
 	invalid_pairs = {
-		typing.Literal[1234]: 1
+		typing.Literal[1234]: 1,
+		simpleschema.Literal(callable): lambda _: True,
 	}
 	inapplicable_constraints = ['asdf', typing.Any, typing.Iterable, r'.*', None, re.compile('asdf')]
 

@@ -48,13 +48,20 @@ class RegExMatcher(ConstraintMatcher):
 class LiteralMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return typing.get_origin(constraint) is typing.Literal
+		return (
+			typing.get_origin(constraint) is typing.Literal or
+			isinstance(constraint, simpleschema.Literal)
+		)
 
 	@staticmethod
 	def validate(item, constraint):
-		literal_args = typing.get_args(constraint)
-		if literal_args and literal_args[0] == item:
-			return True
+		if typing.get_origin(constraint) is typing.Literal:
+			literal_args = typing.get_args(constraint)
+			if literal_args and literal_args[0] == item:
+				return True
+		elif isinstance(constraint, simpleschema.Literal):
+			if constraint.obj == item:
+				return True
 		raise LiteralMismatch(constraint, item)
 
 
