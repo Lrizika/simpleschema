@@ -9,6 +9,7 @@ TODO list:
 - Improve tests
 	- Test for specific item validation exceptions
 	- Test for multiple failures, appropriate raised exceptions
+	- Improve test architecture
 - Add shortcut failure option
 	- Terminology?
 	- Fails the validation if a key matches but the value does not
