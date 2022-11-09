@@ -2,10 +2,9 @@
 import unittest
 from simpleschema.validate import validateItem, validateSchema, isValid
 from simpleschema import ObjectSchema
-from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure, LiteralMismatch, TypeMismatch, IterableMismatch, CallableMismatch, ValueMismatch, RegExMismatch
+from simpleschema.exceptions import ItemValidationFailure, LiteralMismatch, TypeMismatch, CallableMismatch, ValueMismatch, RegExMismatch
 import typing
 import logging
-import sys
 import re
 
 
@@ -227,7 +226,3 @@ class TestValidateItem(unittest.TestCase):
 			logger.debug(context.exception)
 
 
-if __name__ == '__main__':
-	if ('-vv' in sys.argv) or ('--very-verbose' in sys.argv):
-		logging.basicConfig(level=logging.DEBUG, format='    %(funcName)s %(message)s')
-	unittest.main()

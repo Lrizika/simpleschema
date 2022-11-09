@@ -2,7 +2,7 @@
 import typing
 import re
 import simpleschema
-from simpleschema.exceptions import RegExMismatch, LiteralMismatch, SchemaValidationFailure, TypeMismatch, IterableMismatch, CallableMismatch
+from simpleschema.exceptions import RegExMismatch, LiteralMismatch, SchemaValidationFailure, TypeMismatch, CallableMismatch
 
 
 class ConstraintMatcher:
