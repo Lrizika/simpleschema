@@ -12,18 +12,22 @@ class ConstraintMatcher:
 	# potentially a class method
 	@staticmethod
 	def isApplicable(constraint):
-		raise NotImplementedError('ConstraintMatchers must provide isApplicable and validate methods')
+		raise NotImplementedError('ConstraintMatchers must provide isApplicable method')
 
 	# See notes regarding isApplicable
 	@staticmethod
 	def validate(item, constraint):
-		raise NotImplementedError('ConstraintMatchers must provide isApplicable and validate methods')
+		raise NotImplementedError('ConstraintMatchers must provide validate method')
 
 
 class AnyMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return constraint is typing.Any
+		return (
+			constraint is typing.Any or
+			constraint is simpleschema.constraints.Any or
+			isinstance(constraint, simpleschema.constraints.Any)
+		)
 
 	@staticmethod
 	def validate(item, constraint):
@@ -33,7 +37,7 @@ class AnyMatcher(ConstraintMatcher):
 class RegExMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return isinstance(constraint, re.Pattern)
+		return isinstance(constraint, (re.Pattern, simpleschema.constraints.RegEx))
 
 	@staticmethod
 	def validate(item, constraint):
@@ -50,7 +54,7 @@ class LiteralMatcher(ConstraintMatcher):
 	def isApplicable(constraint):
 		return (
 			typing.get_origin(constraint) is typing.Literal or
-			isinstance(constraint, simpleschema.Literal)
+			isinstance(constraint, simpleschema.constraints.Literal)
 		)
 
 	@staticmethod
@@ -59,7 +63,7 @@ class LiteralMatcher(ConstraintMatcher):
 			literal_args = typing.get_args(constraint)
 			if literal_args and literal_args[0] == item:
 				return True
-		elif isinstance(constraint, simpleschema.Literal):
+		elif isinstance(constraint, simpleschema.constraints.Literal):
 			if constraint.obj == item:
 				return True
 		raise LiteralMismatch(constraint, item)
@@ -82,44 +86,23 @@ class TypeMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
 		return (
-			isinstance(constraint, type) or
+			isinstance(constraint, (type, simpleschema.constraints.Type)) or
 			callable(getattr(constraint, "__instancecheck__", None))
 		)
 
 	@staticmethod
 	def validate(item, constraint):
+		if isinstance(constraint, simpleschema.constraints.Type):
+			constraint = constraint.obj
 		if isinstance(item, constraint):
 			return True
 		raise TypeMismatch(constraint, item)
 
 
-# TODO: This probably needs to live in SchemaValidator
-# class IterableMatcher(ConstraintMatcher):
-# 	@staticmethod
-# 	def isApplicable(constraint):
-# 		return (
-# 			isinstance(constraint, typing.Iterable) and not
-# 			isinstance(constraint, (str, bytes))
-# 		)
-
-# 	@staticmethod
-# 	def validate(item, constraint):
-# 		for constraint_option in constraint:
-# 			if constraint_option != constraint:
-# 				# This check prevents us from infinite recursion with certain items
-# 				# Where an item of the iterable is in and of itself the same iterable
-# 				try:
-# 					validateItem(item, constraint_option)
-# 					return True
-# 				except ItemValidationFailure as e:
-# 					logger.debug(e)
-# 		raise IterableMismatch(constraint, item)
-
-
 class CallableMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return callable(constraint)
+		return callable(constraint) or isinstance(constraint, simpleschema.constraints.Callable)
 
 	@staticmethod
 	def validate(item, constraint):

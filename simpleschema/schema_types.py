@@ -1,23 +1,5 @@
 
 
-class Literal:
-	"""
-	Used for wrapping literal objects (e.g. `callable`)
-	that would otherwise be valid constraints
-	"""
-	def __init__(self, obj: object) -> None:
-		self.obj = obj
-
-	def __hash__(self) -> int:
-		return hash(hash(self.obj) + hash(type(self)))
-
-	def __repr__(self) -> str:
-		return f'{type(self).__name__}<{repr(self.obj)}>'
-
-	def __str__(self) -> str:
-		return f'{type(self).__name__}<{str(self.obj)}>'
-
-
 class Schema(dict):
 	pass
 
