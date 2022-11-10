@@ -1,6 +1,7 @@
 
 import typing
 import re
+import simpleschema
 from simpleschema.matchers import AnyMatcher
 from tests.matchers import matcher_test_framework
 
@@ -18,6 +19,7 @@ class TestAnyMatcher(matcher_test_framework.TestMatcher):
 		(typing.Any, callable),
 		(typing.Any, re),
 		(typing.Any, re.compile(r'.*')),
+		(simpleschema.constraints.Any, re.compile(r'.*')),
 	]
 	invalid_pairs = []
 	inapplicable_constraints = [None, '', 'asdf', re.compile(r'.*'), callable]

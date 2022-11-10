@@ -14,11 +14,11 @@ class TestChildSchemaMatcher(matcher_test_framework.TestMatcher):
 	raises = SchemaValidationFailure
 	valid_pairs = [
 		({str: int}, {'asdf': 1234}),
-		({str: simpleschema.Literal(int)}, {'asdf': int}),
+		({str: simpleschema.constraints.Literal(int)}, {'asdf': int}),
 	]
 	invalid_pairs = [
 		({str: int}, {1234: 1234}),
-		({str: simpleschema.Literal(int)}, {'asdf': 1234}),
+		({str: simpleschema.constraints.Literal(int)}, {'asdf': 1234}),
 	]
 	inapplicable_constraints = ['asdf', typing.Any, typing.Iterable, r'.*', None, re.compile('asdf')]
 

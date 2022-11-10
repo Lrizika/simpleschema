@@ -17,14 +17,16 @@ class TestTypeMatcher(matcher_test_framework.TestMatcher):
 		(str, 'asdf'),
 		(typing.Callable, lambda _: True),
 		(typing.Iterable, [1, 2, 3]),
-		(simpleschema.Literal, simpleschema.Literal(1234)),
+		(simpleschema.constraints.Literal, simpleschema.constraints.Literal(1234)),
+		(simpleschema.constraints.Type(list), [1, 2, 3]),
 	]
 	invalid_pairs = [
 		(int, 'asdf'),
 		(str, 1234),
+		(simpleschema.constraints.Type(str), 1234),
 		(typing.Callable, 1234),
 	]
-	inapplicable_constraints = ['asdf', r'.*', None, re.compile('asdf'), simpleschema.Literal(int)]
+	inapplicable_constraints = ['asdf', r'.*', None, re.compile('asdf'), simpleschema.constraints.Literal(int)]
 
 
 

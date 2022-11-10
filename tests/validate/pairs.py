@@ -2,7 +2,7 @@
 
 import typing
 import re
-from simpleschema import ObjectSchema, Literal
+from simpleschema import ObjectSchema
 
 
 # Pairs of (schema, item)

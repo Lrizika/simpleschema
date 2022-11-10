@@ -1,6 +1,7 @@
 
 import typing
 import re
+import simpleschema
 from simpleschema.matchers import RegExMatcher
 from simpleschema.exceptions import RegExMismatch
 from tests.matchers import matcher_test_framework
@@ -28,6 +29,10 @@ class TestRegExMatcher(matcher_test_framework.TestMatcher):
 		(re.compile(r'ab?bc'), 'abc'),
 		(re.compile(r'ab?c'), 'abc'),
 		(re.compile(r'^abc$'), 'abc'),
+		(simpleschema.constraints.RegEx(r'ab?bc'), 'abbc'),
+		(simpleschema.constraints.RegEx(r'ab?bc'), 'abc'),
+		(simpleschema.constraints.RegEx(r'ab?c'), 'abc'),
+		(simpleschema.constraints.RegEx(r'^abc$'), 'abc'),
 	]
 	invalid_pairs = [
 		(re.compile(r'asdf'), 'fdsa'),
@@ -38,5 +43,6 @@ class TestRegExMatcher(matcher_test_framework.TestMatcher):
 		(re.compile(r'ab+bc'), 'abq'),
 		(re.compile(r'abc'), 'abx'),
 		(re.compile(r'ab?bc'), 'abbbbc'),
+		(simpleschema.constraints.RegEx(r'ab?bc'), 'abbbbc'),
 	]
 	inapplicable_constraints = ['asdf', typing.Any, typing.Iterable, r'.*', None]
