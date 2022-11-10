@@ -45,7 +45,7 @@ class RegExMatcher(ConstraintMatcher):
 			if constraint.search(item) is not None:
 				return True
 		except TypeError as e:
-			raise RegExMismatch(constraint, item, child_exception=e)
+			raise RegExMismatch(constraint, item) from e
 		raise RegExMismatch(constraint, item)
 
 

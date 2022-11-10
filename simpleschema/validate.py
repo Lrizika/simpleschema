@@ -24,7 +24,7 @@ class SchemaValidator:
 		try:
 			matcher = self.get_matcher(constraint)
 		except ConstraintException as e:
-			raise ValueMismatch(constraint, item, child_exception=e)
+			raise ValueMismatch(constraint, item) from e
 		return matcher.validate(item, constraint)
 
 	def validate(self, item, schema):
@@ -41,7 +41,9 @@ class SchemaValidator:
 					self.validateItem(item[schema_key], schema_val)
 				except (ItemValidationFailure, SchemaValidationFailure) as e:
 					validation_status = False
-					validation_failures.append(SchemaValidationFailure(schema_key, child_exception=e))
+					new_exception = SchemaValidationFailure(schema_key)
+					new_exception.__cause__ = e
+					validation_failures.append(new_exception)
 			else:
 				for item_key, item_val in item.items():
 					logger.debug(f'Comparing schema key `{schema_key}`, schema value `{schema_val}` against item key `{item_key}`, item value `{item_val}`')

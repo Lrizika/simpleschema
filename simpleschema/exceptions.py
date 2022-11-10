@@ -30,8 +30,12 @@ class SchemaValidationFailure(ValidationFailure):
 			result += f', args: `{self.args}`'
 		if self.kwargs:
 			result += f', kwargs: `{self.kwargs}`'
+		if self.__cause__:
+			result += f', cause: `{self.__cause__}`'
 		result += '>'
 		return result
+
+	__str__ = __repr__
 
 
 class ItemValidationFailure(ValidationFailure):
@@ -52,8 +56,12 @@ class ItemValidationFailure(ValidationFailure):
 			result += f', args: `{self.args}`'
 		if self.kwargs:
 			result += f', kwargs: `{self.kwargs}`'
+		if self.__cause__:
+			result += f', cause: `{self.__cause__}`'
 		result += '>'
 		return result
+
+	__str__ = __repr__
 
 
 class RegExMismatch(ItemValidationFailure):
