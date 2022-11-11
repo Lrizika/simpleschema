@@ -1,3 +1,4 @@
 
-from simpleschema.validate import validateSchema, validateItem, is_valid
-from simpleschema.helper_classes import ObjectSchema
+from simpleschema.validate import validateSchema, validateItem, isValid
+from simpleschema.schema_types import ObjectSchema
+from simpleschema import constraints

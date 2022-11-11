@@ -1,6 +1,14 @@
 
 
-class ObjectSchema(dict):
+class Schema(dict):
+	pass
+
+
+class DictSchema(Schema):
+	pass
+
+
+class ObjectSchema(Schema):
 	"""
 	A schema for an object, rather than a dictionary
 	ObjectSchema are identical to dicts
@@ -31,12 +39,12 @@ class InvalidClass:
 	required_method = 'not_a_callable'
 	def required_b(self):
 		pass
-simpleschema.is_valid(ValidClass, my_schema)  # True
-simpleschema.is_valid(ValidClass(), my_schema)  # True
-simpleschema.is_valid(ValidOnlyIfInstantiated, my_schema)  # False
-simpleschema.is_valid(ValidOnlyIfInstantiated(), my_schema)  # True
-simpleschema.is_valid(InvalidClass, my_schema)  # False
-simpleschema.is_valid(InvalidClass(), my_schema)  # False
+simpleschema.isValid(ValidClass, my_schema)  # True
+simpleschema.isValid(ValidClass(), my_schema)  # True
+simpleschema.isValid(ValidOnlyIfInstantiated, my_schema)  # False
+simpleschema.isValid(ValidOnlyIfInstantiated(), my_schema)  # True
+simpleschema.isValid(InvalidClass, my_schema)  # False
+simpleschema.isValid(InvalidClass(), my_schema)  # False
 
 	"""
 

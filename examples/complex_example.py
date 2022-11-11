@@ -53,7 +53,7 @@ valid_item = {
 
 
 print(
-	'simpleschema.is_valid(valid_item, my_schema)',
+	'simpleschema.isValid(valid_item, my_schema)',
 	simpleschema.validateSchema(valid_item, my_schema)
 )  # True
 

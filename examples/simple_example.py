@@ -24,11 +24,11 @@ bad_item = {
 }
 
 print(
-	'simpleschema.is_valid(item=my_item, schema=my_schema)',
-	simpleschema.is_valid(item=my_item, schema=my_schema)
+	'simpleschema.isValid(item=my_item, schema=my_schema)',
+	simpleschema.isValid(item=my_item, schema=my_schema)
 )  # True
 print(
-	'simpleschema.is_valid(item=bad_item, schema=my_schema)',
-	simpleschema.is_valid(item=bad_item, schema=my_schema)
+	'simpleschema.isValid(item=bad_item, schema=my_schema)',
+	simpleschema.isValid(item=bad_item, schema=my_schema)
 )  # False
 

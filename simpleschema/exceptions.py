@@ -18,13 +18,55 @@ class SchemaValidationFailure(ValidationFailure):
 	"""
 	Raised when a schema does not validate
 	"""
-	pass
+	def __init__(self, schema_key, *args, **kwargs):
+		super().__init__()
+		self.schema_key = schema_key
+		self.args = args
+		self.kwargs = kwargs
+
+	def __repr__(self):
+		result = f'{type(self).__name__}<schema_key: `{self.schema_key}`'
+		if self.args:
+			result += f', args: `{self.args}`'
+		if self.kwargs:
+			result += f', kwargs: `{self.kwargs}`'
+		if self.__cause__:
+			result += f', cause: `{self.__cause__}`'
+		result += '>'
+		return result
+
+	__str__ = __repr__
 
 
 class ItemValidationFailure(ValidationFailure):
 	"""
 	Raised when an item does not validate, and there is not
 	a more relevant exception to raise
+	"""
+	def __init__(self, constraint, item, *args, **kwargs):
+		super().__init__()
+		self.constraint = constraint
+		self.item = item
+		self.args = args
+		self.kwargs = kwargs
+
+	def __repr__(self):
+		result = f'{type(self).__name__}<constraint: `{self.constraint}`, item: `{self.item}`'
+		if self.args:
+			result += f', args: `{self.args}`'
+		if self.kwargs:
+			result += f', kwargs: `{self.kwargs}`'
+		if self.__cause__:
+			result += f', cause: `{self.__cause__}`'
+		result += '>'
+		return result
+
+	__str__ = __repr__
+
+
+class RegExMismatch(ItemValidationFailure):
+	"""
+	Raised when an item does not match a re.Pattern constraint
 	"""
 	pass
 
