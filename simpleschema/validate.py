@@ -4,21 +4,34 @@ import logging
 from simpleschema.schema_types import ObjectSchema
 from simpleschema.exceptions import ConstraintException, SchemaValidationFailure, ItemValidationFailure, ValueMismatch
 from simpleschema.matchers import ConstraintMatcher, AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
+from simpleschema.constraints import Constraint
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaValidator:
-	def __init__(self, matcherClasses: typing.List[typing.Type[ConstraintMatcher]]):
+	def __init__(
+			self,
+			matcherClasses: typing.List[typing.Type[ConstraintMatcher]] = [
+				AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
+			]
+	) -> None:
 		self.matchers = [matcher() for matcher in matcherClasses]
 
-	def get_matcher(self, constraint):
+	def get_matcher(
+			self,
+			constraint: typing.Union[Constraint, typing.Any],
+	) -> ConstraintMatcher:
 		for matcher in self.matchers:
 			if matcher.isApplicable(constraint):
 				return matcher
 		raise ConstraintException(f'Invalid constraint `{constraint}`')
 
-	def validateItem(self, item, constraint):
+	def validateItem(
+			self,
+			item: typing.Any,
+			constraint: typing.Union[Constraint, typing.Any],
+	) -> bool:
 		if item == constraint:
 			return True
 		try:
@@ -27,7 +40,17 @@ class SchemaValidator:
 			raise ValueMismatch(constraint, item) from e
 		return matcher.validate(item, constraint)
 
-	def validate(self, item, schema):
+	def validate(
+			self,
+			item: dict,
+			schema: dict,
+	) -> typing.Tuple[
+			bool,
+			typing.List[typing.Union[
+				ItemValidationFailure,
+				SchemaValidationFailure
+			]]
+	]:
 		validation_failures = []
 		validation_status = True
 
@@ -59,7 +82,7 @@ class SchemaValidator:
 		return (validation_status, validation_failures)
 
 
-default_validator = SchemaValidator([AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher])
+default_validator = SchemaValidator()
 
 
 def validateSchema(
@@ -75,7 +98,7 @@ def validateSchema(
 	return default_validator.validate(item, schema)
 
 
-def isValid(item, schema):
+def isValid(item, schema) -> bool:
 	return validateSchema(item, schema)[0]
 
 
