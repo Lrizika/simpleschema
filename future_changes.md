@@ -22,6 +22,8 @@ TODO list:
 - Add logical operators
 	- simpleschema.logical.And, .Or, .Not
 	- Consider how to implement this well
+- Add option to test for all applicable schema matchers, not just first applicable one
+	- This is relevant for e.g. classes with __call__ methods
 
 Bugs to fix:
 - None currently known!
