@@ -11,12 +11,48 @@ class ConstraintMatcher:
 	# ConstraintMatchers to define isApplicable as an instance method or even
 	# potentially a class method
 	@staticmethod
-	def isApplicable(constraint):
+	def isApplicable(
+			constraint: typing.Union[simpleschema.constraints.Constraint, typing.Any],
+	) -> bool:
+		"""
+		Returns whether a ConstraintMatcher can be applied to a given constraint
+		A SchemaValidator checks each of its ConstraintMatchers' isApplicable methods
+		and validates with the first relevant one. This is why order of ConstraintMatchers
+		is important while initializing oyur SchemaValidator.
+
+		Args:
+			constraint (
+				typing.Union[simpleschema.constraints.Constraint, typing.Any]
+			): The constraint to check the ConstraintMatcher's applicability to
+
+		Returns:
+			bool: Whether the ConstraintMatcher can be applied
+		"""
 		raise NotImplementedError('ConstraintMatchers must provide isApplicable method')
 
 	# See notes regarding isApplicable
 	@staticmethod
-	def validate(item, constraint):
+	def validate(
+			item: typing.Any,
+			constraint: typing.Union[simpleschema.constraints.Constraint, typing.Any],
+	) -> bool:
+		"""
+		Returns True if the item validates for a constraint with this ConstraintMatcher,
+		or raises the appropriate ItemValidationFailure if it does not validate
+		This should only ever be called after isApplicable has returned True for the constraint
+
+		Args:
+			item (typing.Any): The item to validate
+			constraint (
+				typing.Union[simpleschema.constraints.Constraint, typing.Any]
+			): The constraint to validate against
+
+		Raises:
+			ItemValidationFailure: If the item does not validate
+
+		Returns:
+			bool: Always True if the item validates
+		"""
 		raise NotImplementedError('ConstraintMatchers must provide validate method')
 
 
