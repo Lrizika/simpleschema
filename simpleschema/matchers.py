@@ -1,7 +1,7 @@
 
 import typing
 import re
-import simpleschema
+from simpleschema import constraints
 from simpleschema.exceptions import RegExMismatch, LiteralMismatch, SchemaValidationFailure, TypeMismatch, CallableMismatch
 
 
@@ -12,7 +12,7 @@ class ConstraintMatcher:
 	# potentially a class method
 	@staticmethod
 	def isApplicable(
-			constraint: typing.Union[simpleschema.constraints.Constraint, typing.Any],
+			constraint: typing.Union[constraints.Constraint, typing.Any],
 	) -> bool:
 		"""
 		Returns whether a ConstraintMatcher can be applied to a given constraint
@@ -22,7 +22,7 @@ class ConstraintMatcher:
 
 		Args:
 			constraint (
-				typing.Union[simpleschema.constraints.Constraint, typing.Any]
+				typing.Union[constraints.Constraint, typing.Any]
 			): The constraint to check the ConstraintMatcher's applicability to
 
 		Returns:
@@ -34,7 +34,8 @@ class ConstraintMatcher:
 	@staticmethod
 	def validate(
 			item: typing.Any,
-			constraint: typing.Union[simpleschema.constraints.Constraint, typing.Any],
+			constraint: typing.Union[constraints.Constraint, typing.Any],
+			validator,
 	) -> bool:
 		"""
 		Returns True if the item validates for a constraint with this ConstraintMatcher,
@@ -44,8 +45,10 @@ class ConstraintMatcher:
 		Args:
 			item (typing.Any): The item to validate
 			constraint (
-				typing.Union[simpleschema.constraints.Constraint, typing.Any]
+				typing.Union[constraints.Constraint, typing.Any]
 			): The constraint to validate against
+			validator (simpleschema.validate.SchemaValidator): The validator to use, if relevant
+				This is important for things like ChildSchemaMatcher, where the validator must recurse
 
 		Raises:
 			ItemValidationFailure: If the item does not validate
@@ -61,22 +64,22 @@ class AnyMatcher(ConstraintMatcher):
 	def isApplicable(constraint):
 		return (
 			constraint is typing.Any or
-			constraint is simpleschema.constraints.Any or
-			isinstance(constraint, simpleschema.constraints.Any)
+			constraint is constraints.Any or
+			isinstance(constraint, constraints.Any)
 		)
 
 	@staticmethod
-	def validate(item, constraint):
+	def validate(item, constraint, validator):
 		return True
 
 
 class RegExMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return isinstance(constraint, (re.Pattern, simpleschema.constraints.RegEx))
+		return isinstance(constraint, (re.Pattern, constraints.RegEx))
 
 	@staticmethod
-	def validate(item, constraint):
+	def validate(item, constraint, validator):
 		try:
 			if constraint.search(item) is not None:
 				return True
@@ -90,16 +93,16 @@ class LiteralMatcher(ConstraintMatcher):
 	def isApplicable(constraint):
 		return (
 			typing.get_origin(constraint) is typing.Literal or
-			isinstance(constraint, simpleschema.constraints.Literal)
+			isinstance(constraint, constraints.Literal)
 		)
 
 	@staticmethod
-	def validate(item, constraint):
+	def validate(item, constraint, validator):
 		if typing.get_origin(constraint) is typing.Literal:
 			literal_args = typing.get_args(constraint)
 			if literal_args and literal_args[0] == item:
 				return True
-		elif isinstance(constraint, simpleschema.constraints.Literal):
+		elif isinstance(constraint, constraints.Literal):
 			if constraint.obj == item:
 				return True
 		raise LiteralMismatch(constraint, item)
@@ -111,8 +114,8 @@ class ChildSchemaMatcher(ConstraintMatcher):
 		return isinstance(constraint, dict)
 
 	@staticmethod
-	def validate(item, constraint):
-		child_schema_result = simpleschema.validate.validateSchema(item, constraint)
+	def validate(item, constraint, validator):
+		child_schema_result = validator.validate(item, constraint)
 		if child_schema_result[0] is True:
 			return True
 		raise SchemaValidationFailure(constraint, child_schema_result=child_schema_result)
@@ -122,13 +125,13 @@ class TypeMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
 		return (
-			isinstance(constraint, (type, simpleschema.constraints.Type)) or
+			isinstance(constraint, (type, constraints.Type)) or
 			callable(getattr(constraint, "__instancecheck__", None))
 		)
 
 	@staticmethod
-	def validate(item, constraint):
-		if isinstance(constraint, simpleschema.constraints.Type):
+	def validate(item, constraint, validator):
+		if isinstance(constraint, constraints.Type):
 			constraint = constraint.obj
 		if isinstance(item, constraint):
 			return True
@@ -138,10 +141,10 @@ class TypeMatcher(ConstraintMatcher):
 class CallableMatcher(ConstraintMatcher):
 	@staticmethod
 	def isApplicable(constraint):
-		return callable(constraint) or isinstance(constraint, simpleschema.constraints.Callable)
+		return callable(constraint) or isinstance(constraint, constraints.Callable)
 
 	@staticmethod
-	def validate(item, constraint):
+	def validate(item, constraint, validator):
 		if constraint(item):
 			return True
 		raise CallableMismatch(constraint, item)

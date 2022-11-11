@@ -38,7 +38,7 @@ class SchemaValidator:
 			matcher = self.get_matcher(constraint)
 		except ConstraintException as e:
 			raise ValueMismatch(constraint, item) from e
-		return matcher.validate(item, constraint)
+		return matcher.validate(item, constraint, self)
 
 	def validate(
 			self,

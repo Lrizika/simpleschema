@@ -1,6 +1,7 @@
 
 import unittest
 import logging
+from simpleschema.validate import default_validator
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +40,11 @@ class TestMatcher(unittest.TestCase):
 	def test_validate_success(self):
 		for constraint, item in self.valid_pairs:
 			self.assertTrue(
-				self.matcher.validate(item, constraint),
+				self.matcher.validate(item, constraint, default_validator),
 				msg=f'Failed with constraint {constraint}, item {item}'
 			)
 			self.assertTrue(
-				self.matcher(*self.matcher_args, **self.matcher_kwargs).validate(item, constraint),
+				self.matcher(*self.matcher_args, **self.matcher_kwargs).validate(item, constraint, default_validator),
 				msg=f'Failed with constraint {constraint}, item {item}'
 			)
 
@@ -53,7 +54,7 @@ class TestMatcher(unittest.TestCase):
 					self.raises,
 					msg=f'Failed with constraint {constraint}, item {item}'
 			) as context:
-				self.matcher.validate(item, constraint)
-				self.matcher(*self.matcher_args, **self.matcher_kwargs).validate(item, constraint)
+				self.matcher.validate(item, constraint, default_validator)
+				self.matcher(*self.matcher_args, **self.matcher_kwargs).validate(item, constraint, default_validator)
 			logger.debug(context.exception)
 
