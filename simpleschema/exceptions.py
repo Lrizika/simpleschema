@@ -18,10 +18,10 @@ class SchemaValidationFailure(ValidationFailure):
 	"""
 	Raised when a schema does not validate
 	"""
-	def __init__(self, schema_key, *args, **kwargs):
-		super().__init__()
+	def __init__(self, schema_key, *args, causes=[], **kwargs):
+		super().__init__(*args)
 		self.schema_key = schema_key
-		self.args = args
+		self.causes = causes
 		self.kwargs = kwargs
 
 	def __repr__(self):
@@ -31,11 +31,23 @@ class SchemaValidationFailure(ValidationFailure):
 		if self.kwargs:
 			result += f', kwargs: `{self.kwargs}`'
 		if self.__cause__:
-			result += f', cause: `{self.__cause__}`'
+			result += f', cause: `\n\t{self.__cause__}\n`'
+		if self.causes:
+			result += ', causes: `['
+			for cause in self.causes:
+				result += f'\n\t{cause}'
+			result += '\n]`'
 		result += '>'
 		return result
 
 	__str__ = __repr__
+
+
+class NoValidKeyValuePairs(SchemaValidationFailure):
+	"""
+	Raised when no pair of item key/value pairs are valid
+	"""
+	pass
 
 
 class ItemValidationFailure(ValidationFailure):
@@ -44,10 +56,9 @@ class ItemValidationFailure(ValidationFailure):
 	a more relevant exception to raise
 	"""
 	def __init__(self, constraint, item, *args, **kwargs):
-		super().__init__()
+		super().__init__(*args)
 		self.constraint = constraint
 		self.item = item
-		self.args = args
 		self.kwargs = kwargs
 
 	def __repr__(self):

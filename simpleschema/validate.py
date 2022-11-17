@@ -2,7 +2,7 @@
 import typing
 import logging
 from simpleschema.schema_types import ObjectSchema
-from simpleschema.exceptions import ConstraintException, SchemaValidationFailure, ItemValidationFailure, ValueMismatch
+from simpleschema.exceptions import ConstraintException, SchemaValidationFailure, ItemValidationFailure, ValueMismatch, NoValidKeyValuePairs
 from simpleschema.matchers import ConstraintMatcher, AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
 from simpleschema.constraints import Constraint
 
@@ -64,9 +64,10 @@ class SchemaValidator:
 					self.validateItem(item[schema_key], schema_val)
 				except (ItemValidationFailure, SchemaValidationFailure) as e:
 					validation_status = False
-					new_exception = SchemaValidationFailure(schema_key)
-					new_exception.__cause__ = e
-					validation_failures.append(new_exception)
+					# new_exception = SchemaValidationFailure(schema_key)
+					# new_exception.__cause__ = e
+					# validation_failures.append(new_exception)
+					validation_failures.append(e)
 			else:
 				for item_key, item_val in item.items():
 					logger.debug(f'Comparing schema key `{schema_key}`, schema value `{schema_val}` against item key `{item_key}`, item value `{item_val}`')
@@ -78,7 +79,7 @@ class SchemaValidator:
 						logger.debug(e)
 				else:
 					validation_status = False
-					validation_failures.append(SchemaValidationFailure(schema_key))
+					validation_failures.append(NoValidKeyValuePairs(schema_key, schema_val=schema_val))
 		return (validation_status, validation_failures)
 
 

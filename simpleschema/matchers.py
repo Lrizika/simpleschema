@@ -118,7 +118,7 @@ class ChildSchemaMatcher(ConstraintMatcher):
 		child_schema_result = validator.validate(item, constraint)
 		if child_schema_result[0] is True:
 			return True
-		raise SchemaValidationFailure(constraint, child_schema_result=child_schema_result)
+		raise SchemaValidationFailure(constraint, causes=child_schema_result[1])
 
 
 class TypeMatcher(ConstraintMatcher):
