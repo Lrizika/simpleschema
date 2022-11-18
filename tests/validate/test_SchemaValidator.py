@@ -3,6 +3,7 @@ import unittest
 from tests.validate.pairs import VALID_SCHEMA_PAIRS, INVALID_SCHEMA_PAIRS
 from simpleschema.validate import SchemaValidator
 from simpleschema.matchers import AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher
+from simpleschema.exceptions import SchemaValidationFailure, ItemValidationFailure
 
 
 class TestValidateSchema(unittest.TestCase):
@@ -20,5 +21,8 @@ class TestValidateSchema(unittest.TestCase):
 	def test_validates_failure(self):
 		validator = SchemaValidator([AnyMatcher, RegExMatcher, LiteralMatcher, ChildSchemaMatcher, TypeMatcher, CallableMatcher])
 		for pair in INVALID_SCHEMA_PAIRS:
-			self.assertFalse(validator.validate(schema=pair[0], item=pair[1])[0])
+			result = validator.validate(schema=pair[0], item=pair[1])
+			self.assertFalse(result[0])
+			for e in result[1]:
+				self.assertIsInstance(e, (SchemaValidationFailure, ItemValidationFailure))
 
