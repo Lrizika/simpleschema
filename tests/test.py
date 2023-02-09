@@ -2,11 +2,13 @@
 import unittest
 import logging
 import sys
+import os
 
 logger = logging.getLogger(__name__)
 
 
 if __name__ == '__main__':
+	sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 	verbosity = 1
 	if ('-v' in sys.argv) or ('--verbose' in sys.argv):
 		logging.basicConfig(level=logging.INFO, format='    %(funcName)s %(message)s')
